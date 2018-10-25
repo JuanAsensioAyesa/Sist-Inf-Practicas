@@ -1,10 +1,10 @@
-package ecozar;
 import java.sql.*;
 import java.util.LinkedList;
 
 
 public class GestorPreguntas
 {
+	
 	static final int PUBLICADO=1;
 	static final int RECHAZADO=-1;
 	static final int PENDIENTE=0;
@@ -14,11 +14,102 @@ public class GestorPreguntas
 	
 	private GestorDB gdb = new GestorDB();
 	
+	public class Pregunta{
+		
+		public Pregunta(int idPregunta, int idUsuario, int publicada, LinkedList<String> respuestasIncorrectas,
+				String correcta, String texto) {
+			super();
+			this.idPregunta = idPregunta;
+			this.idUsuario = idUsuario;
+			this.publicada = publicada;
+			this.respuestasIncorrectas = respuestasIncorrectas;
+			this.correcta = correcta;
+			this.texto = texto;
+		}
+		private int idPregunta;
+		private int idUsuario;
+		private int publicada;
+		private LinkedList<String> respuestasIncorrectas;
+		private String correcta;
+		private String texto;
+		public int getIDPregunta() {
+			return idPregunta;
+		}
+		public void setIDPregunta(int idPregunta) {
+			this.idPregunta = idPregunta;
+		}
+		public int getIDUsuario() {
+			return idUsuario;
+		}
+		public void setIDUsuario(int idUsuario) {
+			this.idUsuario = idUsuario;
+		}
+		public int getPublicada() {
+			return publicada;
+		}
+		public void setPublicada(int publicada) {
+			this.publicada = publicada;
+		}
+		
+		public String getTexto() {
+			return texto;
+		}
+		public void setTexto(String texto) {
+			this.texto = texto;
+		}
+		public LinkedList<String> getRespuestasIncorrectas() {
+			return respuestasIncorrectas;
+		}
+		public void setRespuestasIncorrectas(LinkedList<String> respuestasIncorrectas) {
+			this.respuestasIncorrectas = respuestasIncorrectas;
+		}
+		public String getCorrecta() {
+			return correcta;
+		}
+		public void setCorrecta(String correcta) {
+			this.correcta = correcta;
+		}
+	}
+	public class PreguntaRespondida{
+		private int idPregunta;
+		private String elegida;
+		private String correcta;
+		public int getIdPregunta() {
+			return idPregunta;
+		}
+		public void setIdPregunta(int idPregunta) {
+			this.idPregunta = idPregunta;
+		}
+		public String getElegida() {
+			return elegida;
+		}
+		public void setElegida(String elegida) {
+			this.elegida = elegida;
+		}
+		public String getCorrecta() {
+			return correcta;
+		}
+		public void setCorrecta(String correcta) {
+			this.correcta = correcta;
+		}
+		public PreguntaRespondida(int idPregunta, String elegida, String correcta) {
+			super();
+			this.idPregunta = idPregunta;
+			this.elegida = elegida;
+			this.correcta = correcta;
+		}
+		
+	}
 	
-	/* Añade la pregunta del usuario con idUsuario y los datos pasados como parámetros, y devuelve en idPregunta el id de la pregunta*/
+	/* AÃ±ade la pregunta del usuario con idUsuario y los datos pasados como parÃ¡metros, y devuelve en idPregunta el id de la pregunta*/
 	@SuppressWarnings("finally")
-	public int subirPregunta(String idUsuario, int publicar, String pregunta, String correcta, String[] incorrectas) throws SQLException
+	public int subirPregunta(Alumno user, Pregunta P) throws SQLException
 	{
+		String idUsuario=user.getIDUsuario();
+		int publicar=P.getPublicada();
+		String pregunta=P.getTexto();
+		String correcta=P.getCorrecta();
+		//usar el iterador para acceder a las respuestas incorrectas
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		conn = gdb.connect();
