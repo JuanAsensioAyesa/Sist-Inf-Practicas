@@ -17,11 +17,88 @@ public class GestorUsuario
 		public String getID() {
 			return this.userID;
 		}
+		
+		public void setID(String userID) {
+			this.userID = userID;
+		}
+	}
+	
+	public class Registrado extends Usuario
+	{
+		private String passwd, descripcion, nombre, apellidos, email;
+		
+		public Registrado(String userID, String passwd, String desc, String nombre, String apellidos, String email) {
+			super(userID);
+			this.setPasswd(passwd);
+			this.setDescripcion(desc);
+			this.setNombre(nombre);
+			this.setApellidos(apellidos);
+			this.setEmail(email);
+		}
+
+		public String getPasswd() {
+			return passwd;
+		}
+
+		public void setPasswd(String passwd) {
+			this.passwd = passwd;
+		}
+
+		public String getNombre() {
+			return nombre;
+		}
+
+		public void setNombre(String nombre) {
+			this.nombre = nombre;
+		}
+
+		public String getApellidos() {
+			return apellidos;
+		}
+
+		public void setApellidos(String apellidos) {
+			this.apellidos = apellidos;
+		}
+
+		public String getDescripcion() {
+			return descripcion;
+		}
+
+		public void setDescripcion(String descripcion) {
+			this.descripcion = descripcion;
+		}
+
+		public String getEmail() {
+			return email;
+		}
+
+		public void setEmail(String email) {
+			this.email = email;
+		}
+	}
+	
+	public class Alumno extends Registrado
+	{
+
+		public Alumno(String userID, String passwd, String desc, String nombre, String apellidos, String email) {
+			super(userID, passwd, desc, nombre, apellidos, email);
+
+		}
+		
+	}
+	
+	public class Profesor extends Registrado
+	{
+
+		public Profesor(String userID, String passwd, String desc, String nombre, String apellidos, String email) {
+			super(userID, passwd, desc, nombre, apellidos, email);
+		}
+		
 	}
 
 	
 	@SuppressWarnings("finally")
-	public boolean enter_unregistered(String login) throws SQLException
+	public boolean enter_unregistered(Usuario user) throws SQLException
 	{
 		String query = "INSERT INTO Usuario (idUsuario) VALUES (?)";
 		int created = 0;
@@ -30,7 +107,7 @@ public class GestorUsuario
 		try{
 			conn = gdb.connect();
 			pstmt = conn.prepareStatement(query);
-			pstmt.setString(1, login);
+			pstmt.setString(1, user.getID());
 			pstmt.executeUpdate();
 		} catch(SQLException e) {
 			System.out.println(e.getMessage());
@@ -44,7 +121,7 @@ public class GestorUsuario
 	
 	
 	@SuppressWarnings("finally")
-	public boolean exit_unregistered(String login) throws SQLException
+	public boolean exit_unregistered(Usuario user) throws SQLException
 	{
 		String query = "DELETE FROM Usuario WHERE idUsuario = ?";
 		int deleted = 0;
@@ -53,7 +130,7 @@ public class GestorUsuario
 		try{
 			conn = gdb.connect();
 			pstmt = conn.prepareStatement(query);
-			pstmt.setString(1, login);
+			pstmt.setString(1, user.getID());
 			pstmt.executeUpdate();
 		} catch(SQLException e) {
 			System.out.println(e.getMessage());
@@ -68,7 +145,7 @@ public class GestorUsuario
 
 	//REGISTRARSE
 	@SuppressWarnings("finally")
-	public boolean sign_inNormalUser(String login, String password, String name, String surname, String email)
+	public boolean sign_inNormalUser(Registrado user)
 	throws SQLException
 	{
 		String query1 = "INSERT INTO Usuario (idUsuario) VALUES (?)";
@@ -79,16 +156,16 @@ public class GestorUsuario
 		try{
 			conn = gdb.connect();
 			pstmt = conn.prepareStatement(query1);
-			pstmt.setString(1, login);
+			pstmt.setString(1, user.getID());
 			pstmt.executeUpdate();
 			pstmt.close();
 			pstmt = conn.prepareStatement(query2);
-			pstmt.setString(1, login);
-			pstmt.setString(2, password);
-			pstmt.setString(3, "");
-			pstmt.setString(4, name);
-			pstmt.setString(5, surname);
-			pstmt.setString(6, email);
+			pstmt.setString(1, user.getID());
+			pstmt.setString(2, user.getPasswd());
+			pstmt.setString(3, user.getDescripcion());
+			pstmt.setString(4, user.getNombre());
+			pstmt.setString(5, user.getApellidos());
+			pstmt.setString(6, user.getEmail());
              // execute the delete statement
             created = pstmt.executeUpdate();
 		} catch(SQLException e) {
@@ -102,7 +179,7 @@ public class GestorUsuario
 	}
 	
 	@SuppressWarnings("finally")
-	public boolean sign_inAlumno(String login, String password, String name, String surname, String email)
+	public boolean sign_inAlumno(Alumno user)
 	throws SQLException
 	{
 		String query1 = "INSERT INTO Usuario (idUsuario) VALUES (?)";
@@ -114,22 +191,22 @@ public class GestorUsuario
 		try{
 			conn = gdb.connect();
 			pstmt = conn.prepareStatement(query1);
-			pstmt.setString(1, login);
+			pstmt.setString(1, user.getID());
 			pstmt.executeUpdate();
 			pstmt.close();
 			
 			pstmt = conn.prepareStatement(query2);
-			pstmt.setString(1, login);
-			pstmt.setString(2, password);
-			pstmt.setString(3, "");
-			pstmt.setString(4, name);
-			pstmt.setString(5, surname);
-			pstmt.setString(6, email);
+			pstmt.setString(1, user.getID());
+			pstmt.setString(2, user.getPasswd());
+			pstmt.setString(3, user.getDescripcion());
+			pstmt.setString(4, user.getNombre());
+			pstmt.setString(5, user.getApellidos());
+			pstmt.setString(6, user.getEmail());
             created = pstmt.executeUpdate();
             
             pstmt.close();
             pstmt = conn.prepareStatement(query3);
-            pstmt.setString(1, login);
+            pstmt.setString(1, user.getID());
             created = pstmt.executeUpdate();
 		} catch(SQLException e) {
 			System.out.println(e.getMessage());
@@ -143,7 +220,7 @@ public class GestorUsuario
 	
 	
 	@SuppressWarnings("finally")
-	public boolean sign_inProfe(String login, String password, String name, String surname, String email)
+	public boolean sign_inProfe(Profesor user)
 	throws SQLException
 	{
 		String query1 = "INSERT INTO Usuario (idUsuario) VALUES (?)";
@@ -155,22 +232,22 @@ public class GestorUsuario
 		try{
 			conn = gdb.connect();
 			pstmt = conn.prepareStatement(query1);
-			pstmt.setString(1, login);
+			pstmt.setString(1, user.getID());
 			pstmt.executeUpdate();
 			pstmt.close();
 			
 			pstmt = conn.prepareStatement(query2);
-			pstmt.setString(1, login);
-			pstmt.setString(2, password);
-			pstmt.setString(3, "");
-			pstmt.setString(4, name);
-			pstmt.setString(5, surname);
-			pstmt.setString(6, email);
+			pstmt.setString(1, user.getID());
+			pstmt.setString(2, user.getPasswd());
+			pstmt.setString(3, user.getDescripcion());
+			pstmt.setString(4, user.getNombre());
+			pstmt.setString(5, user.getApellidos());
+			pstmt.setString(6, user.getEmail());
             created = pstmt.executeUpdate();
             
             pstmt.close();
             pstmt = conn.prepareStatement(query3);
-            pstmt.setString(1, login);
+            pstmt.setString(1, user.getID());
             created = pstmt.executeUpdate();
 		} catch(SQLException e) {
 			System.out.println(e.getMessage());
@@ -185,11 +262,11 @@ public class GestorUsuario
 
 	//INICIAR SESION
 	@SuppressWarnings("finally")
-	public boolean exist_user(String email) throws SQLException 
+	public boolean exist_user(Registrado user) throws SQLException 
 	{
 		Connection con = gdb.connect();
         boolean isAvailable = false;
-        String query = "SELECT * FROM Registrado WHERE email = '"+email+"';";
+        String query = "SELECT * FROM Registrado WHERE idUsuario = '"+user.getID()+"';";
         Statement stmt = null;
         ResultSet resultSet = null;
         try{
@@ -212,9 +289,9 @@ public class GestorUsuario
 	}
 
 	@SuppressWarnings("finally")
-	public boolean removeUser(String username) throws SQLException 
+	public boolean removeUser(Usuario user) throws SQLException 
 	{
-		String query = "DELETE FROM Usuario WHERE idUsuario = '" + username + "'";
+		String query = "DELETE FROM Usuario WHERE idUsuario = '" + user.getID() + "'";
 		int deleted = 0;
 		Connection conn = null;
 		PreparedStatement pstmt = null;
